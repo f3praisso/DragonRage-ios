@@ -1,0 +1,40 @@
+name: iOS toolchain probe
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ios/**'
+      - '.github/workflows/ios-toolchain-probe.yml'
+
+jobs:
+  iphoneos-arm64-probe:
+    runs-on: macos-14
+    steps:
+      - name: Check Xcode and iPhoneOS SDK
+        run: |
+          set -euxo pipefail
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+          xcrun --sdk iphoneos --show-sdk-path
+
+      - name: Compile a minimal iOS arm64 object (no signing)
+        run: |
+          set -euxo pipefail
+          SDKROOT="$(xcrun --sdk iphoneos --show-sdk-path)"
+          xcrun --sdk iphoneos clang \
+            -target arm64-apple-ios15.0 \
+            -isysroot "$SDKROOT" \
+            -miphoneos-version-min=15.0 \
+            -Wall -Wextra -Werror \
+            -c ios/probe/ios_probe.c \
+            -o ios_probe.o
+          file ios_probe.o
+          xcrun --sdk iphoneos nm -g ios_probe.o
+
+      - name: Upload probe object
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-arm64-toolchain-probe
+          path: ios_probe.o
+          if-no-files-found: error
