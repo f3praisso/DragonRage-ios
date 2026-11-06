@@ -1,0 +1,39 @@
+# Local secrets and signing material
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.mobileprovision
+.env
+.env.*
+*.pem
+id_rsa
+id_ed25519
+
+# User-provided game data (do not commit)
+*.iso
+*.rvz
+*.bin
+*.rom
+*.bios
+saves/
+gamedata/
+disc/
+wii/
+
+# Generated build output
+build/
+port/build/
+android/app/build/
+ios/build/
+DerivedData/
+*.o
+*.a
+*.dylib
+*.so
+*.framework/
+
+# Local tooling
+.venv/
+__pycache__/
+.DS_Store
